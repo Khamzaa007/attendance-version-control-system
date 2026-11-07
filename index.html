@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Deployment & Version Control - Attendance System</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-main: #f8fafc;
+            --sidebar-bg: #0f172a;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 290px;
+            background-color: var(--sidebar-bg);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #38bdf8;
+            margin-bottom: 30px;
+        }
+
+        .menu-section {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .menu-item {
+            padding: 12px 16px;
+            color: #cbd5e1;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: var(--card-bg);
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar h1 {
+            font-size: 20px;
+            color: var(--text-main);
+        }
+
+        .version-tag {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .content-body {
+            padding: 32px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .card h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+
+        /* Version Control Steps Grid */
+        .vc-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .vc-step-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .vc-step-card h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        /* Terminal Code Box */
+        .terminal-box {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-top: 12px;
+            overflow-x: auto;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #475569;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn:hover { opacity: 0.9; }
+
+        .form-control {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            flex: 1;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-title">
+            <span>🚀 GitHub Version Control</span>
+        </div>
+
+        <div class="menu-section">GitHub & Git Менеджмент</div>
+        <div class="menu-item active" onclick="switchSection('deployment', this)">1. GitHub-қа орналастыру</div>
+        <div class="menu-item" onclick="switchSection('commits', this)">2. Итерациялар және Commit тарихы</div>
+        <div class="menu-item" onclick="switchSection('docs', this)">3. Құжаттарды жаңарту (Docs)</div>
+        <div class="menu-item" onclick="switchSection('app_live', this)">4. Жобаның тірі нұсқасы (Live App)</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="topbar">
+            <h1 id="page-title">Прототип кодын GitHub платформасына орналастыру</h1>
+            <span class="version-tag">GIT REPO V 3.0</span>
+        </div>
+
+        <div class="content-body">
+
+            <!-- 1. DEPLOYMENT SECTION -->
+            <div id="deployment" class="section active">
+                <div class="card">
+                    <h3>GitHub-қа кодты жүктеу және орналастыру қадамдары</h3>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.6;">
+                        Әзірленген прототипті GitHub репозиторийіне жіберу және версияларды басқару үшін төмендегі командалар қолданылды:
+                    </p>
+
+                    <div class="vc-steps">
+                        <div class="vc-step-card">
+                            <h4>1. Репозиторийді іске қосу</h4>
+                            <p style="font-size:13px; color:var(--text-muted);">Локалды папкада Git ортасын орнату.</p>
+                            <div class="terminal-box">git init</div>
+                        </div>
+                        <div class="vc-step-card">
+                            <h4>2. Файлдарды қосу</h4>
+                            <p style="font-size:13px; color:var(--text-muted);">index.html және басқа файлдарды индекске қосу.</p>
+                            <div class="terminal-box">git add .</div>
+                        </div>
+                        <div class="vc-step-card">
+                            <h4>3. Commit жасау</h4>
+                            <p style="font-size:13px; color:var(--text-muted);">Өзгерістерді түсіндірме жазбамен сақтау.</p>
+                            <div class="terminal-box">git commit -m "v3.0 native prototype"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. COMMITS SECTION -->
+            <div id="commits" class="section">
+                <div class="card">
+                    <h3>Әрбір итерациядан кейінгі Git Commit тарихы</h3>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">
+                        Жобаны дамыту барысында жасалған негізгі версиялар тізімі:
+                    </p>
+                    <table>
+                        <thead>
+                            <tr><th>Commit ID</th><th>Итерация сипаттамасы</th><th>Тармақ (Branch)</th><th>Уақыты</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>#a1b2c3d</code></td><td>V 1.0: Қағаз прототип пен бастапқы интерфейс</td><td>main</td><td>Жақында</td></tr>
+                            <tr><td><code>#e4f5g6h</code></td><td>V 2.0: Цифрлық прототип нұсқалары (A, B, C)</td><td>main</td><td>Жақында</td></tr>
+                            <tr><td><code>#j7k8l9m</code></td><td>V 3.0: Табиғи прототип және GitHub deployment</td><td>main</td><td>Бүгін</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3. DOCS SECTION -->
+            <div id="docs" class="section">
+                <div class="card">
+                    <h3>Жоба құжаттарын жаңарту (Documentation Update)</h3>
+                    <p style="color: var(--text-muted); line-height: 1.6;">
+                        Әрбір итерация аяқталғаннан кейін GitHub репозиторийіндегі <b>README.md</b> файлы және пайдалану жөніндегі нұсқаулықтар уақтылы жаңартылып отырды. Бұл басқа әзірлеушілерге жоба құрылымын түсінуге көмектеседі.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 4. LIVE APP SECTION -->
+            <div id="app_live" class="section">
+                <div class="card">
+                    <h3>Студенттердің сабаққа қатысу жүйесі (Live Prototype)</h3>
+                    <div class="form-control">
+                        <input type="text" id="studentInput" placeholder="Студенттің аты-жөні...">
+                        <button class="btn btn-primary" onclick="addStudent()">Қосу</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>№</th><th>Аты-жөні</th><th>Мәртебесі</th><th>Әрекеттер</th></tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <!-- JS арқылы толтырылады -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let students = [
+            { id: 1, name: "Әлібеков Нұрсұлтан", status: "Белгіленбеген" },
+            { id: 2, name: "Сұлтанова Аружан", status: "Белгіленбеген" }
+        ];
+
+        function switchSection(sectionId, element) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            element.classList.add('active');
+
+            const titles = {
+                'deployment': 'Прототип кодын GitHub платформасына орналастыру',
+                'commits': 'Итерациялар және Git Commit тарихы',
+                'docs': 'Жоба құжаттарын жүйелі түрде жаңарту',
+                'app_live': 'Жобаның жұмыс істейтін тірі прототипі (Live App)'
+            };
+            document.getElementById('page-title').textContent = titles[sectionId];
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById("studentTableBody");
+            tbody.innerHTML = "";
+
+            students.forEach((s, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${s.name}</strong></td>
+                        <td>${s.status}</td>
+                        <td>
+                            <button class="btn btn-success" onclick="setStatus(${s.id}, 'Қатысты')">Бар</button>
+                            <button class="btn btn-danger" onclick="setStatus(${s.id}, 'Қатыспады')">Жоқ</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function setStatus(id, status) {
+            const student = students.find(s => s.id === id);
+            if (student) {
+                student.status = status;
+                renderTable();
+            }
+        }
+
+        function addStudent() {
+            const input = document.getElementById("studentInput");
+            if (input.value.trim() !== "") {
+                students.push({
+                    id: Date.now(),
+                    name: input.value.trim(),
+                    status: "Белгіленбеген"
+                });
+                input.value = "";
+                renderTable();
+            }
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>
